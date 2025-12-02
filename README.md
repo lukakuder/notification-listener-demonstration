@@ -34,6 +34,55 @@ Za predstavitev sem si jo izbral ker želim v našem projektu implementirati fun
 - **Zadnja sprememba:** Junija 2025, z izdajo Android 16, ki uporablja API v36.
 - **Dokumentacija:** [Android Reference](https://developer.android.com/reference/android/service/notification/NotificationListenerService).
 
+## Primer implementacije
+
+1. Dodajanje dovoljenja v `AndroidManifest.xml`:
+```xml
+<service
+    android:name=".services.NotificationListenerServiceDemo"
+    android:label="@string/app_name"
+    android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+    android:exported="true">
+    <intent-filter>
+        <action android:name="android.service.notification.NotificationListenerService"/>
+    </intent-filter>
+</service>
+```
+
+2. Implementacija storitve:
+```kotlin
+class NotificationListenerServiceDemo : NotificationListenerService() {
+    override fun onNotificationPosted(sbn: StatusBarNotification, rankingMap: RankingMap) {
+      val notification: Notification = sbn.notification
+      val extras: Bundle = notification.extras
+
+      if (sbn.packageName !in acceptedPackages) {
+        //cancelNotification(sbn.key)
+        Log.d(TAG, "Notification that is not in acceptedPackages ignored automatically: ${sbn.packageName}")
+        return
+      }
+
+      val title = extras.getString(Notification.EXTRA_TITLE)
+      val bigTitle = extras.getCharSequence(Notification.EXTRA_TITLE_BIG)?.toString()
+      val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()
+      val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString()
+      val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString()
+
+      Log.d(TAG, "Notification Posted from: ${sbn.packageName}")
+      Log.d(TAG, "Title: $title")
+      Log.d(TAG, "BigTitle: $bigTitle")
+      Log.d(TAG, "Text: $text")
+      Log.d(TAG, "BigText: $bigText")
+      Log.d(TAG, "SubText: $subText")
+
+      val ongoing = sbn.isOngoing
+      Log.d(TAG, "Ongoing notification: $ongoing from ${sbn.packageName}")
+    }
+    override fun onNotificationRemoved(sbn: StatusBarNotification, rankingMap: RankingMap) {}
+    override fun onNotificationRankingUpdate(rankingMap: RankingMap) {}
+}
+```
+
 ## Demonstracija izjem
 
 ### Primeri izjem in njihovo reševanje
