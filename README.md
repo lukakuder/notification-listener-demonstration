@@ -85,6 +85,10 @@ class NotificationListenerServiceDemo : NotificationListenerService() {
 }
 ```
 
+3. Primer izpisa:
+![Primer izpisa 1](./images/dh-notification.png)
+![Primer izpisa 2](./images/img.png)
+
 ## Demonstracija izjem
 
 ### Primeri izjem in njihovo reševanje
