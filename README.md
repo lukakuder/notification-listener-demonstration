@@ -18,7 +18,7 @@ Za predstavitev sem si jo izbral ker želim v našem projektu implementirati fun
 
 ### Licenca
 - NotificationListenerService je del Android operacijskega sistema, tako da spada pod **Android Open Source Project**, ki uporablja **Apache License 2.0**:
-    - [Povezava do licence](https://source.android.com/license)
+  - [Povezava do licence](https://source.android.com/license)
 
 ### Uporabnost in statistika
 - **Uporabniki:** NotificationListenerService je razširjena na skoraj vseh Android napravah (tiste ki uprabljajo API v16 in novejši), kar pomeni da ga v neki obliki uporablja skoraj 4 milijarde uporabnikov.
@@ -36,50 +36,52 @@ Za predstavitev sem si jo izbral ker želim v našem projektu implementirati fun
 
 ## Primer implementacije
 
+Poleg prikazanega moramo najprej vprašati uporabnika za dovoljenje.
+
 1. Dodajanje dovoljenja v `AndroidManifest.xml`:
 ```xml
 <service
-    android:name=".services.NotificationListenerServiceDemo"
-    android:label="@string/app_name"
-    android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-    android:exported="true">
-    <intent-filter>
-        <action android:name="android.service.notification.NotificationListenerService"/>
-    </intent-filter>
+        android:name=".services.NotificationListenerServiceDemo"
+        android:label="@string/app_name"
+        android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+        android:exported="true">
+  <intent-filter>
+    <action android:name="android.service.notification.NotificationListenerService"/>
+  </intent-filter>
 </service>
 ```
 
 2. Implementacija storitve:
 ```kotlin
 class NotificationListenerServiceDemo : NotificationListenerService() {
-    override fun onNotificationPosted(sbn: StatusBarNotification, rankingMap: RankingMap) {
-      val notification: Notification = sbn.notification
-      val extras: Bundle = notification.extras
+  override fun onNotificationPosted(sbn: StatusBarNotification, rankingMap: RankingMap) {
+    val notification: Notification = sbn.notification
+    val extras: Bundle = notification.extras
 
-      if (sbn.packageName !in acceptedPackages) {
-        //cancelNotification(sbn.key)
-        Log.d(TAG, "Notification that is not in acceptedPackages ignored automatically: ${sbn.packageName}")
-        return
-      }
-
-      val title = extras.getString(Notification.EXTRA_TITLE)
-      val bigTitle = extras.getCharSequence(Notification.EXTRA_TITLE_BIG)?.toString()
-      val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()
-      val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString()
-      val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString()
-
-      Log.d(TAG, "Notification Posted from: ${sbn.packageName}")
-      Log.d(TAG, "Title: $title")
-      Log.d(TAG, "BigTitle: $bigTitle")
-      Log.d(TAG, "Text: $text")
-      Log.d(TAG, "BigText: $bigText")
-      Log.d(TAG, "SubText: $subText")
-
-      val ongoing = sbn.isOngoing
-      Log.d(TAG, "Ongoing notification: $ongoing from ${sbn.packageName}")
+    if (sbn.packageName !in acceptedPackages) {
+      //cancelNotification(sbn.key)
+      Log.d(TAG, "Notification that is not in acceptedPackages ignored automatically: ${sbn.packageName}")
+      return
     }
-    override fun onNotificationRemoved(sbn: StatusBarNotification, rankingMap: RankingMap) {}
-    override fun onNotificationRankingUpdate(rankingMap: RankingMap) {}
+
+    val title = extras.getString(Notification.EXTRA_TITLE)
+    val bigTitle = extras.getCharSequence(Notification.EXTRA_TITLE_BIG)?.toString()
+    val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()
+    val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString()
+    val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString()
+
+    Log.d(TAG, "Notification Posted from: ${sbn.packageName}")
+    Log.d(TAG, "Title: $title")
+    Log.d(TAG, "BigTitle: $bigTitle")
+    Log.d(TAG, "Text: $text")
+    Log.d(TAG, "BigText: $bigText")
+    Log.d(TAG, "SubText: $subText")
+
+    val ongoing = sbn.isOngoing
+    Log.d(TAG, "Ongoing notification: $ongoing from ${sbn.packageName}")
+  }
+  override fun onNotificationRemoved(sbn: StatusBarNotification, rankingMap: RankingMap) {}
+  override fun onNotificationRankingUpdate(rankingMap: RankingMap) {}
 }
 ```
 
@@ -87,7 +89,7 @@ class NotificationListenerServiceDemo : NotificationListenerService() {
 
 ### Primeri izjem in njihovo reševanje
 
-**1. NullPointerException**: 
+**1. NullPointerException**:
 - Obvestilo lahko nima določenega polja (npr. naslov ali besedilo).
 - Če ne preverimo, ali je vrnjena vrednost null, se nam lahko aplikacija pod določenimi pogoji zruši.
 ```kotlin
@@ -95,14 +97,14 @@ val title = extras.getString(Notification.EXTRA_TITLE) ?: "Brez naslova"
 val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString() ?: "Brez besedila"
 ```
 
-**2. SecurityException**: 
+**2. SecurityException**:
 - Če uporabnik aplikaciji prekliče dovoljenje za dostop do obvestil, se pri določenih klicih lahko sproži izjema.
 - Zato je priporočljivo dati takšne klice v try-catch.
 ```kotlin
 try {
-    cancelNotification(sbn.key)
+  cancelNotification(sbn.key)
 } catch (e: SecurityException) {
-    Log.e(TAG, "Ni dovoljenja za preklic obvestil!")
+  Log.e(TAG, "Ni dovoljenja za preklic obvestil!")
 }
 ```
 
