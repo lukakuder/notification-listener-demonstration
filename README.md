@@ -8,7 +8,6 @@ Za predstavitev sem si jo izbral ker želim v našem projektu implementirati fun
 
 ### Prednosti
 - **Univerzalnost:** Možno je zajemati vsa sistemska in aplikacijska obvestila.
-- **Prilagodljivost:** Razvijalci lahko prilagodijo, katere vrste obvestil želijo spremljati in kako naj se obdelujejo.
 - **Dostop do podrobnih informacij:** Omogoča dostop do podrobnih informacij o obvestilih, kot so vsebina, čas prejema in izvorna aplikacija.
 - **Nadzor nad obvestili:** Aplikacije lahko upravljajo obvestila, na primer jih brišejo ali spreminjajo njihovo vidnost.
 
@@ -21,7 +20,7 @@ Za predstavitev sem si jo izbral ker želim v našem projektu implementirati fun
 - NotificationListenerService je del Android operacijskega sistema, tako da spada pod **Android Open Source Project**, ki uporablja **Apache License 2.0**:
   - [Povezava do licence](https://source.android.com/license)
 
-### Uporabnost in statistika
+### Statistika
 - **Uporabniki:** NotificationListenerService je razširjen na skoraj vseh Android napravah (tiste ki uprabljajo API v18 in novejši), kar pomeni da ga v neki obliki uporablja skoraj 4 milijarde uporabnikov.
 - Število aplikacij, ki uporabljajo NotificationListenerService ni javno, ampak ga uporablja veliko aplikacij za produktivnost, varnost, nadzor in avtomatizacijo.
 
@@ -37,7 +36,7 @@ Za predstavitev sem si jo izbral ker želim v našem projektu implementirati fun
 
 ## Primer implementacije
 
-Poleg prikazanega moramo najprej vprašati uporabnika za dovoljenje.
+1. Najprej uporabnika vprašamo za dovoljenje:
 ```kotlin
 binding.settingsButton.setOnClickListener {
     val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
@@ -45,7 +44,7 @@ binding.settingsButton.setOnClickListener {
 }
 ```
 
-1. Dodajanje dovoljenja v `AndroidManifest.xml`:
+2. Dodajanje dovoljenja v `AndroidManifest.xml`:
 - Uporablja **System Binding**, potrebna implementacija "Foreground Service"
 ```xml
 <service
@@ -59,7 +58,7 @@ binding.settingsButton.setOnClickListener {
 </service>
 ```
 
-2. Implementacija storitve:
+3. Implementacija storitve:
 ```kotlin
 class NotificationListenerServiceDemo : NotificationListenerService() {
   override fun onNotificationPosted(sbn: StatusBarNotification, rankingMap: RankingMap) {
@@ -93,7 +92,7 @@ class NotificationListenerServiceDemo : NotificationListenerService() {
 }
 ```
 
-3. Primer izpisa:
+4. Primer izpisa:
 ![Primer izpisa 1](./images/dh-notification.png)
 ![Primer izpisa 2](./images/img.png)
 
