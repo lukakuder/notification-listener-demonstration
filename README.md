@@ -8,25 +8,26 @@ Za predstavitev sem si jo izbral ker želim v našem projektu implementirati fun
 
 ### Prednosti
 - **Univerzalnost:** Možno je zajemati vsa sistemska in aplikacijska obvestila.
-- **Ne zahteva root** - deluje na vseh modernih android napravah.
-- **Možnost avtomatske obdelave:** Obvestila je možno avtomatsko analizirati, filtrirati, šteti...
+- **Prilagodljivost:** Razvijalci lahko prilagodijo, katere vrste obvestil želijo spremljati in kako naj se obdelujejo.
+- **Dostop do podrobnih informacij:** Omogoča dostop do podrobnih informacij o obvestilih, kot so vsebina, čas prejema in izvorna aplikacija.
+- **Nadzor nad obvestili:** Aplikacije lahko upravljajo obvestila, na primer jih brišejo ali spreminjajo njihovo vidnost.
 
 ### Slabosti
-- **Zasebnost:** Potrebuje invazivna dovoljenja, kar lahko odvrne uporabnike.
-- **Potrebna dovoljenja:** Uporabnik mora ročno odobriti dovoljenja v nastavitvah.
+- **Zasebnost:** Potrebuje invazivna dovoljenja, ki jih mora uporabnik ročno odobriti, kar lahko odvrne uporabnike.
 - **Poraba sistemskih virov:** Storitev mora biti stalno aktivna v ozadju, kar lahko (minimalno) vpliva na baterijo in procesiranje.
+- **Omejitve dostopa do vsebine:** Nekatere informacije v obvestilih so lahko omejene zaradi varnostnih razlogov.
 
 ### Licenca
 - NotificationListenerService je del Android operacijskega sistema, tako da spada pod **Android Open Source Project**, ki uporablja **Apache License 2.0**:
   - [Povezava do licence](https://source.android.com/license)
 
 ### Uporabnost in statistika
-- **Uporabniki:** NotificationListenerService je razširjena na skoraj vseh Android napravah (tiste ki uprabljajo API v16 in novejši), kar pomeni da ga v neki obliki uporablja skoraj 4 milijarde uporabnikov.
+- **Uporabniki:** NotificationListenerService je razširjen na skoraj vseh Android napravah (tiste ki uprabljajo API v18 in novejši), kar pomeni da ga v neki obliki uporablja skoraj 4 milijarde uporabnikov.
 - Število aplikacij, ki uporabljajo NotificationListenerService ni javno, ampak ga uporablja veliko aplikacij za produktivnost, varnost, nadzor in avtomatizacijo.
 
 ### Časovna in prostorska zahtevnost
-- **Prostorska:** Tipična implementacija porabi le nekaj 10 KB v aplikaciji; poraba RAM je odvisna od obsega zbiranja podatkov (npr. shranjevanje zgodovine obvestil).
-- **Časovna:** Implementacija osnovne funkcionalnosti traja cca. **1–2 dni** za izkušenega razvijalca.
+- **Prostorska:** Tipična implementacija porabi le nekaj 10 KB v aplikaciji; poraba RAM je odvisna od količine zbranih podatkov.
+- **Časovna:** Minimalna, porabi samo nekaj milisekund za prevajanje in nekaj milisekund za obdelavo vsakega dogodka.
 - **Vpliv na baterijo:** Minimalen pri osnovnih funkcionalnostih.
 
 ### Vzdrževanje tehnologije
@@ -37,8 +38,15 @@ Za predstavitev sem si jo izbral ker želim v našem projektu implementirati fun
 ## Primer implementacije
 
 Poleg prikazanega moramo najprej vprašati uporabnika za dovoljenje.
+```kotlin
+binding.settingsButton.setOnClickListener {
+    val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+    startActivity(intent)
+}
+```
 
 1. Dodajanje dovoljenja v `AndroidManifest.xml`:
+- Uporablja **System Binding**, potrebna implementacija "Foreground Service"
 ```xml
 <service
         android:name=".services.NotificationListenerServiceDemo"
