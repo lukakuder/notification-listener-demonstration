@@ -1,4 +1,4 @@
-# Android NotificationListenerServiceDemo
+# Android NotificationListenerService
 
 ## Kratek opis in razlog izbire
 
